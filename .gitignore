@@ -174,7 +174,7 @@ cython_debug/
 .vscode
 
 media/
-static/
+
 
 # Персональные настройки Ruff
 personal/
