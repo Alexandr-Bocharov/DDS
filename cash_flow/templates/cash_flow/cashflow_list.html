@@ -1,0 +1,100 @@
+{% extends 'cash_flow/base.html' %}
+{% block title %}Список операций{% endblock %}
+{% block content %}
+<div class="text-center mb-3">
+    <h2 class="mb-4">Записи о движении денежных средств</h2>
+</div>
+<!--<form method="get" class="row g-3 mb-4">-->
+<!--    <input type="date" name="start_date" value="{{ request.GET.start_date }}">-->
+<!--    <input type="date" name="end_date" value="{{ request.GET.end_date }}">-->
+<!--    <select name="status" class="form-select">-->
+<!--        <option value="">Все</option>-->
+<!--        {% for s in statuses %}-->
+<!--            <option value="{{ s.id }}" {% if request.GET.status == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--    <select name="type" class="form-select">-->
+<!--        <option value="">Все</option>-->
+<!--        {% for t in types %}-->
+<!--            <option value="{{ t.id }}" {% if request.GET.type == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--    <select name="category" class="form-select">-->
+<!--        <option value="">Все</option>-->
+<!--        {% for c in categories %}-->
+<!--            <option value="{{ c.id }}" {% if request.GET.category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>-->
+<!--        {% endfor %}-->
+<!--        </select>-->
+<!--    <select name="subcategory" class="form-select">-->
+<!--        <option value="">Все</option>-->
+<!--        {% for sc in subcategories %}-->
+<!--            <option value="{{ sc.id }}" {% if request.GET.subcategory == sc.id|stringformat:"s" %}selected{% endif %}>{{ sc.name }}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--</form>-->
+<div class="text-center mb-3">
+  <a href="{% url 'cashflow:cashflow_create' %}" class="btn btn-primary d-inline-flex align-items-center gap-2 px-4 py-2 shadow-sm rounded">
+    <i class="bi bi-plus-circle"></i> Создать запись
+  </a>
+</div>
+<div class="table-responsive">
+    <h2 class="mb-4">Фильтрация записей</h2>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-2">{{ filter_form.date_from.label_tag }} {{ filter_form.date_from }}</div>
+        <div class="col-md-2">{{ filter_form.date_to.label_tag }} {{ filter_form.date_to }}</div>
+        <div class="col-md-2">{{ filter_form.status.label_tag }} {{ filter_form.status }}</div>
+        <div class="col-md-2">{{ filter_form.type.label_tag }} {{ filter_form.type }}</div>
+        <div class="col-md-2">{{ filter_form.category.label_tag }} {{ filter_form.category }}</div>
+        <div class="col-md-2">{{ filter_form.subcategory.label_tag }} {{ filter_form.subcategory }}</div>
+
+        <div class="col-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary me-2">
+                <i class="bi bi-funnel"></i> Фильтровать
+            </button>
+            <a href="{% url 'cashflow:cashflow_list' %}" class="btn btn-outline-secondary">
+                Сбросить
+            </a>
+        </div>
+    </form>
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Тип</th>
+                <th>Категория</th>
+                <th>Подкатегория</th>
+                <th>Сумма</th>
+                <th>Комментарий</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.get_effective_date }}</td>
+                    <td>{{ record.status.name }}</td>
+                    <td>{{ record.type.name }}</td>
+                    <td>{{ record.category.name }}</td>
+                    <td>{{ record.subcategory.name }}</td>
+                    <td>{{ record.amount }}</td>
+                    <td>{{ record.comment }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'cashflow:cashflow_update' record.id %}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                            <a href="{% url 'cashflow:cashflow_delete' record.id %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Нет записей по выбранным фильтрам</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

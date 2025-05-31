@@ -1,0 +1,41 @@
+{% extends 'cash_flow/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              {{ form.custom_date|as_crispy_field }}
+              {{ form.status|as_crispy_field }}
+              {{ form.type|as_crispy_field }}
+              {{ form.category|as_crispy_field }}
+              {{ form.subcategory|as_crispy_field }}
+              {{ form.amount|as_crispy_field }}
+              {{ form.comment|as_crispy_field }}
+
+              <div class="mt-4 d-grid gap-2 d-sm-flex justify-content-sm-end">
+                <button type="submit" class="btn btn-success px-4 py-2 fw-semibold shadow-sm rounded w-100 w-sm-auto">
+                  {% if object %}
+                    <i class="bi bi-pencil-square"></i> Изменить
+                  {% else %}
+                    <i class="bi bi-plus-circle"></i> Создать
+                  {% endif %}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/cashflow_form.js' %}"></script>
+{% endblock %}
