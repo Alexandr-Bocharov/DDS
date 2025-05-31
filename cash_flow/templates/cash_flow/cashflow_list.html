@@ -4,34 +4,6 @@
 <div class="text-center mb-3">
     <h2 class="mb-4">Записи о движении денежных средств</h2>
 </div>
-<!--<form method="get" class="row g-3 mb-4">-->
-<!--    <input type="date" name="start_date" value="{{ request.GET.start_date }}">-->
-<!--    <input type="date" name="end_date" value="{{ request.GET.end_date }}">-->
-<!--    <select name="status" class="form-select">-->
-<!--        <option value="">Все</option>-->
-<!--        {% for s in statuses %}-->
-<!--            <option value="{{ s.id }}" {% if request.GET.status == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>-->
-<!--        {% endfor %}-->
-<!--    </select>-->
-<!--    <select name="type" class="form-select">-->
-<!--        <option value="">Все</option>-->
-<!--        {% for t in types %}-->
-<!--            <option value="{{ t.id }}" {% if request.GET.type == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>-->
-<!--        {% endfor %}-->
-<!--    </select>-->
-<!--    <select name="category" class="form-select">-->
-<!--        <option value="">Все</option>-->
-<!--        {% for c in categories %}-->
-<!--            <option value="{{ c.id }}" {% if request.GET.category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>-->
-<!--        {% endfor %}-->
-<!--        </select>-->
-<!--    <select name="subcategory" class="form-select">-->
-<!--        <option value="">Все</option>-->
-<!--        {% for sc in subcategories %}-->
-<!--            <option value="{{ sc.id }}" {% if request.GET.subcategory == sc.id|stringformat:"s" %}selected{% endif %}>{{ sc.name }}</option>-->
-<!--        {% endfor %}-->
-<!--    </select>-->
-<!--</form>-->
 <div class="text-center mb-3">
   <a href="{% url 'cashflow:cashflow_create' %}" class="btn btn-primary d-inline-flex align-items-center gap-2 px-4 py-2 shadow-sm rounded">
     <i class="bi bi-plus-circle"></i> Создать запись
