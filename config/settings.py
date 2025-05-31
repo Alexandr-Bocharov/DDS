@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "cash_flow",
+    "rest_framework",
 
     "crispy_forms",
     "crispy_bootstrap4",
