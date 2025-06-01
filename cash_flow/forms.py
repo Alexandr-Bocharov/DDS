@@ -1,5 +1,11 @@
 from django import forms
 from .models import CashFlowRecord, Category, SubCategory, Type, Status
+from cash_flow.validation import (
+    validate_category_type_match,
+    validate_subcategory_category_match,
+    validate_custom_date,
+    validate_cash_flow_record_amount
+)
 
 
 class CashFlowRecordForm(forms.ModelForm):
@@ -31,23 +37,31 @@ class CashFlowRecordForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        type = cleaned_data.get("type")
+        record_type = cleaned_data.get("type")
         category = cleaned_data.get("category")
         subcategory = cleaned_data.get("subcategory")
+        custom_date = cleaned_data.get("custom_date")
+        amount = cleaned_data.get("amount")
 
-        # Проверка: категория должна принадлежать выбранному типу
-        if category and type and category.type != type:
-            self.add_error(
-                "category",
-                "Выбранная категория не относится к выбранному типу."
-            )
+        try:
+            validate_category_type_match(category, record_type)
+        except ValueError as e:
+            self.add_error("category", str(e))
 
-        # Проверка: подкатегория должна принадлежать выбранной категории
-        if subcategory and category and subcategory.category != category:
-            self.add_error(
-                "subcategory",
-                "Выбранная подкатегория не относится к выбранной категории."
-            )
+        try:
+            validate_subcategory_category_match(subcategory, category)
+        except ValueError as e:
+            self.add_error("subcategory", str(e))
+
+        try:
+            validate_custom_date(custom_date)
+        except ValueError as e:
+            self.add_error("custom_date", str(e))
+
+        try:
+            validate_cash_flow_record_amount(amount)
+        except ValueError as e:
+            self.add_error("amount", str(e))
 
 
 class StatusForm(forms.ModelForm):
@@ -96,6 +110,8 @@ class CashFlowFilterForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-select"})
     )
     subcategory = forms.ModelChoiceField(
-        queryset=SubCategory.objects.all(), required=False, label="Подкатегория",
+        queryset=SubCategory.objects.all(),
+        required=False,
+        label="Подкатегория",
         widget=forms.Select(attrs={"class": "form-select"})
     )
