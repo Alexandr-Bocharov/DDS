@@ -26,7 +26,11 @@ class Type(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    type = models.ForeignKey(Type, on_delete=models.CASCADE, related_name='categories')
+    type = models.ForeignKey(
+        Type,
+        on_delete=models.CASCADE,
+        related_name='categories'
+    )
 
     class Meta:
         unique_together = ('name', 'type')
@@ -78,4 +82,5 @@ class CashFlowRecord(models.Model):
         return self.custom_date if self.custom_date else self.created_at
 
     def __str__(self):
-        return f"{self.get_effective_date()} | {self.type.name} | {self.amount} руб."
+        return (f"{self.get_effective_date()} "
+                f"| {self.type.name} | {self.amount} руб.")

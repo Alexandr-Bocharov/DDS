@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const categorySelect = document.getElementById("id_category");
   const subcategorySelect = document.getElementById("id_subcategory");
 
-  // 🧩 При изменении типа — обновить категории
+  // При изменении типа — обновить категории
   typeSelect.addEventListener("change", function () {
     const typeId = this.value;
 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // 🧩 При изменении категории — обновить подкатегории
+  // При изменении категории — обновить подкатегории
   categorySelect.addEventListener("change", function () {
     const categoryId = this.value;
 

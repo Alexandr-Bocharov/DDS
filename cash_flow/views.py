@@ -1,3 +1,8 @@
+from typing import Any, Dict
+from django.http import HttpRequest, HttpResponse
+from django.views.generic.edit import FormMixin
+from django.db.models.query import QuerySet
+
 from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -65,7 +70,7 @@ class CashFlowRecordListView(ListView):
     ordering = ['-created_at']
     context_object_name = "records"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
         form = CashFlowFilterForm(self.request.GET)
 
@@ -90,7 +95,7 @@ class CashFlowRecordListView(ListView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["filter_form"] = CashFlowFilterForm(self.request.GET)
         return context
@@ -136,7 +141,10 @@ class DirectoryView(View):
             'categories': Category.objects.all(),
             'subcategories': SubCategory.objects.all(),
         }
-        return render(request, 'cash_flow/directories.html', context)
+
+        return render(
+            request, 'cash_flow/directories.html', context
+        )
 
 
 class StatusCreateView(CreateView):
@@ -198,7 +206,9 @@ class TypeDeleteView(DeleteView):
     template_name = "cash_flow/type_confirm_delete.html"
     success_url = reverse_lazy("cashflow:directories")
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> (
+            HttpResponse
+    ):
         self.object = self.get_object()
         try:
             return super().post(request, *args, **kwargs)
@@ -240,14 +250,17 @@ class CategoryDeleteView(DeleteView):
     template_name = "cash_flow/category_confirm_delete.html"
     success_url = reverse_lazy("cashflow:directories")
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> (
+            HttpResponse
+    ):
         self.object = self.get_object()
         try:
             return super().post(request, *args, **kwargs)
         except ProtectedError:
             messages.error(
                 request,
-                "Нельзя удалить категорию, так как она используется в записях."
+                "Нельзя удалить категорию, "
+                "так как она используется в записях."
             )
             return redirect(self.success_url)
 
@@ -282,43 +295,52 @@ class SubCategoryDeleteView(DeleteView):
     template_name = "cash_flow/subcategory_confirm_delete.html"
     success_url = reverse_lazy("cashflow:directories")
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> (
+            HttpResponse
+    ):
         self.object = self.get_object()
         try:
             return super().post(request, *args, **kwargs)
         except ProtectedError:
             messages.error(
                 request,
-                "Нельзя удалить подкатегорию, так как она используется в записях."
+                "Нельзя удалить подкатегорию, "
+                "так как она используется в записях."
             )
             return redirect(self.success_url)
 
 
-def load_subcategories(request):
+def load_subcategories(request: HttpRequest) -> JsonResponse:
     """
     Возвращает список подкатегорий, относящихся к заданной категории.
 
-    Получает параметр `category_id` из GET-запроса и фильтрует подкатегории по этому идентификатору.
-    Результат возвращается в формате JSON, содержащем список подкатегорий с их идентификаторами и названиями.
+    Получает параметр `category_id` из GET-запроса
+    и фильтрует подкатегории по этому идентификатору.
+    Результат возвращается в формате JSON,
+    содержащем список подкатегорий с их идентификаторами и названиями.
 
     Args:
         request (HttpRequest): HTTP-запрос, содержащий параметр `category_id`.
 
     Returns:
         JsonResponse: JSON-ответ с подкатегориями, например:
-                      {"subcategories": [{"id": 1, "name": "Подкатегория 1"}, ...]}
+                {"subcategories": [{"id": 1, "name": "Подкатегория 1"}, ...]}
     """
     category_id = request.GET.get("category_id")
-    subcategories = SubCategory.objects.filter(category_id=category_id).values("id", "name")
+    subcategories = SubCategory.objects.filter(
+        category_id=category_id
+    ).values("id", "name")
     return JsonResponse({"subcategories": list(subcategories)})
 
 
-def load_categories(request):
+def load_categories(request: HttpRequest) -> JsonResponse:
     """
     Возвращает список категорий, относящихся к заданному типу.
 
-    Получает параметр `type_id` из GET-запроса и фильтрует категории по этому идентификатору.
-    Результат возвращается в формате JSON, содержащем список категорий с их идентификаторами и названиями.
+    Получает параметр `type_id` из GET-запроса
+    и фильтрует категории по этому идентификатору.
+    Результат возвращается в формате JSON,
+    содержащем список категорий с их идентификаторами и названиями.
 
     Args:
         request (HttpRequest): HTTP-запрос, содержащий параметр `type_id`.
@@ -328,5 +350,7 @@ def load_categories(request):
                 {"categories": [{"id": 1, "name": "Категория 1"}, ...]}
     """
     type_id = request.GET.get("type_id")
-    categories = Category.objects.filter(type_id=type_id).values("id", "name")
+    categories = Category.objects.filter(
+        type_id=type_id
+    ).values("id", "name")
     return JsonResponse({"categories": list(categories)})
